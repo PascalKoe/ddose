@@ -1,0 +1,13 @@
+[package]
+name = "ddose-can"
+version = "0.1.0"
+edition = "2021"
+authors = [
+    "Pascal Koestler <pascal.koestler@outlook.de>"
+]
+license = "MIT OR Apache-2.0"
+repository = "https://github.com/PascalKoe/ddose"
+
+[dependencies]
+embedded-hal = { version = "0.2" }
+libc = { version = "0.2" }
