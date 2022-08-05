@@ -64,6 +64,9 @@ impl TryFrom<libc::c_uint> for CanInterface {
     }
 }
 
+/// Wrapper for socketcan sockets
+/// 
+/// Creates socketcan sockets and allows to read and write to them.
 pub struct CanSocket(AsyncFd<RawFd>);
 
 impl CanSocket {
@@ -72,8 +75,15 @@ impl CanSocket {
     /// This function creates a new CAN socket. The socket is not bound to any
     /// CAN interface and therefore no I/O operations are available.
     /// To bind the socket, call [CanSocket::bind()].
-    pub fn create() -> Result<Self, std::io::Error> {
-        let socket = unsafe { libc::socket(libc::PF_CAN, libc::SOCK_RAW, libc::CAN_RAW) };
+    /// 
+    /// # Arguments
+    ///  * [socket_type]: e.g. [libc::SOCK_RAW] or [libc::SOCK_DGRAM]
+    ///  * [socket_proto]: e.g. [libc::CAN_RAW] or [libc::CAN_ISOTP]
+    pub fn create(
+        socket_type: libc::c_int,
+        socket_proto: libc::c_int,
+    ) -> Result<Self, std::io::Error> {
+        let socket = unsafe { libc::socket(libc::PF_CAN, socket_type, socket_proto) };
         if socket.is_negative() {
             return Err(std::io::Error::last_os_error());
         }

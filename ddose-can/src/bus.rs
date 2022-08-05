@@ -14,7 +14,7 @@ impl CanBus {
     ///
     /// Creates a new socketcan socket and binds it to the specified interface.
     pub fn open(can_if: &CanInterface) -> Result<Self, std::io::Error> {
-        let socket = CanSocket::create()?;
+        let socket = CanSocket::create(libc::SOCK_RAW, libc::CAN_RAW)?;
         socket.bind(&can_if)?;
         socket.set_nonblocking()?;
 
