@@ -2,4 +2,6 @@
 members = [
     "ddose-common",
     "ddose-can",
+    "ddose-isotp",
 ]
+
