@@ -95,12 +95,28 @@ impl CanSocket {
     ///
     /// After the CAN socket is open, the interface which the CAN socket shall
     /// listen on or write to must be definied.
+    /// If you need to specifiy the addresses CAN adresses, you can use the
+    /// [bind_adress()] function.
     pub fn bind(&self, can_if: &CanInterface) -> Result<(), std::io::Error> {
+        let can_address: libc::__c_anonymous_sockaddr_can_can_addr = unsafe { std::mem::zeroed() };
+        self.bind_address(can_if, can_address)
+    }
+
+    /// Binds the CAN socket to an CAN interface with custom address
+    ///
+    /// After the CAN socket is open, the interface which the CAN socket shall
+    /// listen on or write to must be definied.
+    pub fn bind_address(
+        &self,
+        can_if: &CanInterface,
+        can_address: libc::__c_anonymous_sockaddr_can_can_addr,
+    ) -> Result<(), std::io::Error> {
         const ADDRESS_SIZE: usize = std::mem::size_of::<libc::sockaddr_can>();
 
         let mut address: libc::sockaddr_can = unsafe { std::mem::zeroed() };
         address.can_family = libc::AF_CAN as _;
         address.can_ifindex = can_if.if_index() as _;
+        address.can_addr = can_address;
 
         let ptr = &address as *const libc::sockaddr_can;
         let ret = unsafe { libc::bind(self.as_raw_fd(), ptr as _, ADDRESS_SIZE as _) };
