@@ -9,9 +9,10 @@ license = "MIT OR Apache-2.0"
 repository = "https://github.com/PascalKoe/ddose"
 
 [dependencies]
-embedded-hal = { version = "0.2" }
+ddose-common = { path = "../ddose-common" }
 libc = { version = "0.2" }
 tokio = { version = "1", features = [ "net" ]}
 
 [dev-dependencies]
+embedded-hal = { version = "0.2" }
 tokio = { version = "1", features = ["net", "io-util", "rt-multi-thread", "macros" ] }

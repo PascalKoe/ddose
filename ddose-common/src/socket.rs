@@ -64,7 +64,7 @@ impl TryFrom<libc::c_uint> for CanInterface {
     }
 }
 
-pub(crate) struct CanSocket(AsyncFd<RawFd>);
+pub struct CanSocket(AsyncFd<RawFd>);
 
 impl CanSocket {
     /// Creates a new Linux socket

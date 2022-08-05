@@ -1,6 +1,5 @@
+use ddose_common::{CanFrame, CanInterface, CanSocket};
 use tokio::io::{AsyncReadExt, AsyncWriteExt};
-
-use crate::{CanFrame, CanInterface, CanSocket};
 
 /// Allows reading and writing frames on a CAN bus.
 ///
