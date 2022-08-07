@@ -77,8 +77,8 @@ impl CanSocket {
     /// To bind the socket, call [CanSocket::bind()].
     ///
     /// # Arguments
-    ///  * [socket_type]: e.g. [libc::SOCK_RAW] or [libc::SOCK_DGRAM]
-    ///  * [socket_proto]: e.g. [libc::CAN_RAW] or [libc::CAN_ISOTP]
+    ///  * `socket_type`: e.g. [libc::SOCK_RAW] or [libc::SOCK_DGRAM]
+    ///  * `socket_proto`: e.g. [libc::CAN_RAW] or [libc::CAN_ISOTP]
     pub fn create(
         socket_type: libc::c_int,
         socket_proto: libc::c_int,
@@ -96,7 +96,7 @@ impl CanSocket {
     /// After the CAN socket is open, the interface which the CAN socket shall
     /// listen on or write to must be definied.
     /// If you need to specifiy the addresses CAN adresses, you can use the
-    /// [bind_adress()] function.
+    /// [Self::bind_address()] function.
     pub fn bind(&self, can_if: &CanInterface) -> Result<(), std::io::Error> {
         let can_address: libc::__c_anonymous_sockaddr_can_can_addr = unsafe { std::mem::zeroed() };
         self.bind_address(can_if, can_address)
