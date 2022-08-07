@@ -65,7 +65,7 @@ impl TryFrom<libc::c_uint> for CanInterface {
 }
 
 /// Wrapper for socketcan sockets
-/// 
+///
 /// Creates socketcan sockets and allows to read and write to them.
 pub struct CanSocket(AsyncFd<RawFd>);
 
@@ -75,7 +75,7 @@ impl CanSocket {
     /// This function creates a new CAN socket. The socket is not bound to any
     /// CAN interface and therefore no I/O operations are available.
     /// To bind the socket, call [CanSocket::bind()].
-    /// 
+    ///
     /// # Arguments
     ///  * [socket_type]: e.g. [libc::SOCK_RAW] or [libc::SOCK_DGRAM]
     ///  * [socket_proto]: e.g. [libc::CAN_RAW] or [libc::CAN_ISOTP]
