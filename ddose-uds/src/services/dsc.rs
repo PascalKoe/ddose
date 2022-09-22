@@ -56,6 +56,9 @@ impl UdsClient {
         let p2 = std::time::Duration::from_millis(res_pdu.p2 as u64);
         let p2_extended = std::time::Duration::from_millis(res_pdu.p2_extended as u64 * 10);
 
+        self.p2_timing = p2;
+        self.p2_extended_timing = p2_extended;
+
         Ok((p2, p2_extended))
     }
 }

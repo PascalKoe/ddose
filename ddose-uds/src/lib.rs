@@ -10,6 +10,8 @@ mod services;
 pub use nrc::*;
 pub use services::*;
 
+const DEFAULT_P2_TIMEOUT: std::time::Duration = std::time::Duration::from_millis(10_000);
+
 #[derive(Debug, Error)]
 pub enum UdsError {
     #[error("Isotp Error: {0}")]
@@ -26,15 +28,24 @@ pub enum UdsError {
 
     #[error("{0}")]
     Other(String),
+
+    #[error("Timeout")]
+    Timeout,
 }
 
 pub struct UdsClient {
+    p2_timing: std::time::Duration,
+    p2_extended_timing: std::time::Duration,
     isotp_conn: IsotpConnection,
 }
 
 impl UdsClient {
     pub fn new(isotp_conn: IsotpConnection) -> Self {
-        Self { isotp_conn }
+        Self {
+            isotp_conn,
+            p2_timing: DEFAULT_P2_TIMEOUT,
+            p2_extended_timing: DEFAULT_P2_TIMEOUT,
+        }
     }
 
     pub async fn query<Req, Res>(&mut self, req: Req) -> Result<Res, UdsError>
@@ -49,10 +60,16 @@ impl UdsClient {
 
         // We only need to send the request once but we use the loop the continue receiving when the
         // server needs more time to answer
+        let mut timeout = self.p2_timing;
         loop {
-            // TODO: add read timeout (p2 or p2_extended)
             let mut buffer = [0; 4096];
-            let bytes_read = self.isotp_conn.read(&mut buffer).await?;
+            let bytes_read =
+                match tokio::time::timeout(timeout, self.isotp_conn.read(&mut buffer)).await {
+                    Ok(Ok(bytes_read)) => Ok(bytes_read),
+                    Ok(Err(e)) => Err(UdsError::TransportError(e)),
+                    Err(_) => Err(UdsError::Timeout),
+                }?;
+
             let data = &buffer[..bytes_read];
 
             // Handle all the negative responses
@@ -75,6 +92,7 @@ impl UdsClient {
                 // UDS allows the server to send out the NRC 0x78 which signals that more time is
                 // needed for the requested operation. Therefor we just wait for the next response.
                 if data[2] == Nrc::RequestCorrectlyReceivedResponsePending.into() {
+                    timeout = self.p2_extended_timing;
                     continue;
                 }
 
