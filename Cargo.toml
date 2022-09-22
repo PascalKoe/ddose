@@ -1,5 +1,6 @@
 [workspace]
 members = [
+    "ddose",
     "ddose-common",
     "ddose-can",
     "ddose-isotp",
