@@ -1,4 +1,4 @@
-use crate::uds::{UdsClient, UdsError, pdus};
+use crate::uds::{pdus, UdsClient, UdsError};
 
 /// Represents the different sessions defined in the UDS specification.
 /// Non standard sessions can be represented using [`Session::Other(nrc)`]

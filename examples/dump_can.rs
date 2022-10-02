@@ -1,4 +1,4 @@
-use ddose::{CanInterface, CanBus};
+use ddose::{CanBus, CanInterface};
 use embedded_hal::can::Frame;
 
 #[tokio::main]

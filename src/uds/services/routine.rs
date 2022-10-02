@@ -1,4 +1,4 @@
-use crate::uds::{UdsClient, UdsError, pdus};
+use crate::uds::{pdus, UdsClient, UdsError};
 
 #[derive(Debug, Clone, Copy)]
 pub enum RoutineAction {
