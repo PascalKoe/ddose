@@ -35,7 +35,6 @@ impl<'a> TxPdu for RoutineRequest<'a> {
 pub struct RoutineResponse {
     pub control: u8,
     pub routine_id: u16,
-    pub info: u8,
     pub params: Vec<u8>,
 }
 
@@ -45,7 +44,7 @@ impl RxPdu for RoutineResponse {
     }
 
     fn len_min() -> usize {
-        5
+        4
     }
 
     fn len_max() -> usize {
@@ -60,12 +59,11 @@ impl RxPdu for RoutineResponse {
         routine_id.copy_from_slice(&data[2..4]);
         let routine_id = u16::from_be_bytes(routine_id);
 
-        let params = Vec::from(&data[5..]);
+        let params = Vec::from(&data[4..]);
 
         Self {
             control: data[1],
             routine_id,
-            info: data[4],
             params,
         }
     }
@@ -90,15 +88,17 @@ mod tests {
 
     #[test]
     fn deserializes_response() {
+        let res = RoutineResponse::deserialize(&[0x71, 0x01, 0xFF, 0x00]);
+        assert_eq!(res.control, 0x01);
+        assert_eq!(res.routine_id, 0xFF00);
+        assert_eq!(res.params, []);
         let res = RoutineResponse::deserialize(&[0x71, 0x01, 0x00, 0xFF, 0x00]);
         assert_eq!(res.control, 0x01);
         assert_eq!(res.routine_id, 0x00FF);
-        assert_eq!(res.info, 0x00);
-        assert_eq!(res.params, []);
+        assert_eq!(res.params, [0x00]);
         let res = RoutineResponse::deserialize(&[0x71, 0x01, 0x00, 0xFF, 0x00, 0xFF, 0xFF, 0xFF]);
         assert_eq!(res.control, 0x01);
         assert_eq!(res.routine_id, 0x00FF);
-        assert_eq!(res.info, 0x00);
-        assert_eq!(res.params, [0xFF, 0xFF, 0xFF]);
+        assert_eq!(res.params, [0x00, 0xFF, 0xFF, 0xFF]);
     }
 }
